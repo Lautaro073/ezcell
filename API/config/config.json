@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "ezecell",
+    "password": "44376073" ,
+    "database": "ezecell",
+    "host": "db4free.net",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "ezecell",
+    "password": "44376073" ,
+    "database": "ezecell",
+    "host": "db4free.net",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "ezecell",
+    "password": "44376073" ,
+    "database": "ezecell",
+    "host": "db4free.net",
+    "dialect": "mysql"
+  }
+}
