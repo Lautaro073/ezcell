@@ -170,7 +170,7 @@ input[id="6"]:checked ~ .pagination .pagination-item[for="6"]{
 }
 @media only screen and (max-width: 768px) {
     .fondo-carrusel {
-      height: 500px;
+      height: 350px;
     }
     .tit-carrusel {
       font-size: 45px;

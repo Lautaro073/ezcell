@@ -3,7 +3,14 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const morgan = require('morgan');
 const fs = require('fs');
+const mercadopago = require('mercadopago');
 
+mercadopago.configure({
+  access_token: 'TEST-6229067183884225-080917-6a286f43b742af0e5267783a37a15c8d-1128342054'
+});
+/*mercadopago.configure({
+  access_token: 'APP_USR-6229067183884225-080917-d5744e088841b5a2de969ce102b274c6-1128342054'
+});*/
 // Importaciones de tus rutas
 const productoRoutes = require('./routes/productos');
 const ordenes = require('./routes/ordenes');
@@ -12,6 +19,7 @@ const carritoRoutes = require('./routes/carrito');
 const checkoutRouter = require('./routes/checkout');
 const sessionRoutes = require('./routes/session');
 const categoriaRoutes = require('./routes/categorias');
+const mp =require('./routes/mp')
 const path = require('path');
 
 const app = express();
@@ -42,7 +50,7 @@ app.use('/api/carrito', carritoRoutes);
 app.use('/api/checkout', checkoutRouter); 
 app.use('/api/session', sessionRoutes);
 app.use('/api/categorias', categoriaRoutes);
-
+app.use('/create_preference', mp)
 // Iniciar el servidor
 const PORT = 3000;
 app.listen(PORT, () => {

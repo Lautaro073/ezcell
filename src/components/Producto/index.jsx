@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 function Producto(props) {
-    const { id } = useParams();
     const productId = id; 
+    const { id } = useParams();
     const [productos, setProductos] = useState([]);
     const { agregarAlCarrito } = props;
     useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+ // Asegúrate de importar correctamente el componente PaymentButton
 
 function Carrito() {
   const [productos, setProductos] = useState([]);
@@ -25,21 +25,35 @@ function Carrito() {
   const irAPago = () => {
     navigate("/checkout");
   };
-
   const agregarProducto = async (productoId) => {
     console.log("Producto ID:", productoId); // Agrega esta línea
     try {
       const stockActual = await verificarStock(productoId);
-      if (stockActual <= 0) {
-        alert("Sin stock");
-        return;
+  
+      // Obtén el producto del estado productos del carrito
+      const producto = productos.find((p) => p.id_producto === productoId);
+      
+      // Verifica si ya hay productos en el carrito
+      if (producto) {
+        // Verifica si agregar más productos excederá el stock disponible
+        if (producto.cantidad + 1 > stockActual) {
+          alert("No hay suficiente stock disponible para agregar más productos.");
+          return;
+        }
+      } else {
+        // Si no hay productos del mismo tipo en el carrito, verifica si la cantidad a agregar supera el stock disponible
+        if (1 > stockActual) {
+          alert("No hay suficiente stock disponible para agregar el producto.");
+          return;
+        }
       }
-
+  
+      // Continúa con el proceso de agregar el producto al carrito
       const response = await axios.post(`http://localhost:3000/api/carrito/${carritoId}`, {
         id_producto: productoId,
         cantidad: 1,
       });
-
+  
       if (response.status === 201 || response.status === 200) {
         cargarProductos();
       }
@@ -96,7 +110,43 @@ function Carrito() {
       0
     );
   };
+  
+  
+ const [paymentUrl, setPaymentUrl] = useState('');
 
+ const handlePayment = async () => {
+  try {
+    // Concatena los nombres de todos los productos en el carrito
+    const productNames = productos.map(producto => producto.nombre).join(", ");
+    
+    const response = await axios.post('/create_preference', {
+      title: `Compra de: ${productNames}`, // Incluye los nombres de los productos en el título
+      quantity: 1,
+      price: calcularTotal()
+    });
+
+    setPaymentUrl(response.data);
+  } catch (error) {
+    console.log('Error al crear la preferencia', error);
+  }
+};
+useEffect(() => {
+  // Verifica si el parámetro "status" está presente en la URL
+  const queryParams = new URLSearchParams(window.location.search);
+  const paymentStatus = queryParams.get("status");
+
+  if (paymentStatus) {
+    if (paymentStatus === "success") {
+      navigate("/checkout");
+    } else if (paymentStatus === "pending") {
+      navigate("/checkout/pendiente");
+    } else if (paymentStatus === "failure") {
+      navigate("/checkout/error");
+    } else {
+      navigate("/checkout/error");
+    }
+  }
+}, []);
   return (
     <div className="container mt-4">
       <h2>Productos en el Carrito</h2>
@@ -147,13 +197,15 @@ function Carrito() {
         );
       })}
       {productos.length > 0 && (
-        <div className="mt-3">
-          <button className="btn btn-success" onClick={irAPago}>
-            Proceder al Pago - Total: ${calcularTotal()}
-          </button>
-        </div>
+        <div className="mt-3">{paymentUrl ? (
+        <a className="btn btn-primary"  href={paymentUrl} rel="noopener noreferrer">Pagar con Mercado Pago</a>
+      ) : (
+        <button className="btn btn-success" onClick={handlePayment}> Proceder al Pago - Total: ${calcularTotal()}</button>
       )}
+    </div>
+         )}
     </div>
   );
 }
+
 export default Carrito;

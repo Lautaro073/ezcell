@@ -1,16 +1,20 @@
+import React, { useState } from 'react';
 import axios from 'axios';
 
-function CheckoutForm() {
+function Checkout() {
+    const [formaEntrega, setFormaEntrega] = useState('retiro'); // Opción por defecto
+
     const handleCheckout = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
         const checkoutData = {
             nombreCompleto: formData.get('nombreCompleto'),
-            direccion: formData.get('direccionEnvio'),  // Aquí
-            telefono: formData.get('numeroTelefono'),   // Aquí
-            email: formData.get('correoElectronico'),   // Aquí
-            carritoId: localStorage.getItem('carritoId')
+            direccion: formaEntrega === 'envio' ? formData.get('direccionEnvio') : 'Local', // Si es envío, toma la dirección; si es retiro, pon "Local"
+            telefono: formData.get('numeroTelefono'),
+            email: formData.get('correoElectronico'),
+            carritoId: localStorage.getItem('carritoId'),
+            formaEntrega: formaEntrega // Agrega la forma de entrega al objeto checkoutData
         };
 
         try {
@@ -33,9 +37,18 @@ function CheckoutForm() {
                     <input type="text" className="form-control" id="nombreCompleto" name="nombreCompleto" placeholder="Nombre completo" required />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="direccionEnvio" className="form-label">Dirección de envío</label>
-                    <input type="text" className="form-control" id="direccionEnvio" name="direccionEnvio" placeholder="Dirección de envío" required />
+                    <label htmlFor="formaEntrega" className="form-label">Forma de entrega</label>
+                    <select className="form-control" id="formaEntrega" name="formaEntrega" onChange={(e) => setFormaEntrega(e.target.value)} required>
+                        <option value="retiro">Retiro en local</option>
+                        <option value="envio">Envío a domicilio</option>
+                    </select>
                 </div>
+                {formaEntrega === 'envio' && (
+                    <div className="mb-3">
+                        <label htmlFor="direccionEnvio" className="form-label">Dirección de envío</label>
+                        <input type="text" className="form-control" id="direccionEnvio" name="direccionEnvio" placeholder="Dirección de envío" required />
+                    </div>
+                )}
                 <div className="mb-3">
                     <label htmlFor="numeroTelefono" className="form-label">Número de teléfono</label>
                     <input type="text" className="form-control" id="numeroTelefono" name="numeroTelefono" placeholder="Número de teléfono" required />
@@ -50,4 +63,4 @@ function CheckoutForm() {
     );
 }
 
-export default CheckoutForm;
+export default Checkout;

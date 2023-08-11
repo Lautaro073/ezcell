@@ -31,6 +31,20 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Búsqueda de productos por término
+router.get('/search', async (req, res) => {
+    const searchTerm = req.query.search;
+    if (!searchTerm) {
+        return res.status(400).json({ error: "Debe proporcionar un término de búsqueda." });
+    }
+    try {
+        const [rows] = await db.query('SELECT * FROM Productos WHERE nombre LIKE ?', [`%${searchTerm}%`]);
+        res.json(rows);
+    } catch (error) {
+        console.error("Error en la búsqueda:", error);
+        res.status(500).send('Error al buscar los productos');
+    }
+});
 
 
 // Obtener un producto por ID
@@ -86,14 +100,35 @@ router.post('/', async (req, res) => {
 // Actualizar un producto
 router.put('/:id', async (req, res) => {
     try {
-        const { nombre, descripcion, precio, id_categoria, imagen, stock } = req.body;
-        await db.query('UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, id_categoria = ?, imagen = ?, stock = ? WHERE id_producto = ?', [nombre, descripcion, precio, id_categoria, imagen, stock, req.params.id]);
-        res.send('Producto actualizado correctamente');
+        const { nombre, descripcion, precio, id_categoria, stock } = req.body;
+        
+        if (req.files && req.files.imagen) {
+            let uploadedFile = req.files.imagen;
+            const fileTypes = /jpeg|jpg|png|gif/;
+            const mimetype = fileTypes.test(uploadedFile.mimetype);
+
+            if (!mimetype) {
+                return res.status(400).send('Formato de archivo no permitido.');
+            }
+
+            const absolutePath = path.join(__dirname, '../../public/assets/imgProductos', uploadedFile.name);
+            const relativePath = '/assets/imgProductos/' + uploadedFile.name;
+
+            uploadedFile.mv(absolutePath, async (err) => {
+                if (err) return res.status(500).send(err);
+                await db.query('UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, id_categoria = ?, imagen = ?, stock = ? WHERE id_producto = ?', [nombre, descripcion, precio, id_categoria, relativePath, stock, req.params.id]);
+                res.send('Producto actualizado correctamente');
+            });
+        } else {
+            await db.query('UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, id_categoria = ?, stock = ? WHERE id_producto = ?', [nombre, descripcion, precio, id_categoria, stock, req.params.id]);
+            res.send('Producto actualizado correctamente');
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al actualizar el producto');
     }
 });
+
 
 // Eliminar un producto
 router.delete('/:id', async (req, res) => {

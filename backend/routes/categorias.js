@@ -5,13 +5,14 @@ const router = express.Router();
 // Obtener todas las categorías
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Categorias');
-        res.json(rows);
+      const [rows] = await db.query('SELECT * FROM Categorias');
+      res.json(rows);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al obtener las categorías');
+      console.error(error);
+      res.status(500).send('Error al obtener las categorías');
     }
-});
+  });
+  
 
 // Obtener una categoría específica por ID
 router.get('/:id_categoria', async (req, res) => {
