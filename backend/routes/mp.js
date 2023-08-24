@@ -19,9 +19,9 @@ router.post('/', (req, res) => {
         }
       ],
       back_urls: {
-        success: 'http://localhost:3001/checkout',
-        failure: 'http://localhost:3001/checkout/error',
-        pending: 'http://localhost:3001/checkout/pendiente',
+        success: 'http://ezecell.store/checkout',
+        failure: 'http://ezecell.store/checkout/error',
+        pending: 'http://ezecell.store/checkout/pendiente',
       },
       auto_return: 'approved',
     };

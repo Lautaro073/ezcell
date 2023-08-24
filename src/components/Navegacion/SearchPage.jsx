@@ -8,7 +8,7 @@ function SearchPage({agregarAlCarrito}) {
   
     useEffect(() => {
       axios
-        .get(`http://localhost:3000/api/productos/search?search=${searchQuery}`)
+        .get(`productos/search?search=${searchQuery}`)
         .then((response) => {
           setProductos(response.data);
         })

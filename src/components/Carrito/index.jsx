@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
  // Asegúrate de importar correctamente el componente PaymentButton
-
+ import '../../config'; 
 function Carrito() {
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ function Carrito() {
 
   const cargarProductos = useCallback(() => {
     axios
-      .get(`http://localhost:3000/api/carrito/${carritoId}`)
+      .get(`carrito/${carritoId}`)
       .then((respuesta) => {
         console.log("Productos desde el servidor:", respuesta.data);
         setProductos(respuesta.data);
@@ -49,7 +49,7 @@ function Carrito() {
       }
   
       // Continúa con el proceso de agregar el producto al carrito
-      const response = await axios.post(`http://localhost:3000/api/carrito/${carritoId}`, {
+      const response = await axios.post(`carrito/${carritoId}`, {
         id_producto: productoId,
         cantidad: 1,
       });
@@ -75,14 +75,14 @@ function Carrito() {
       // Usando la cantidad del producto para decidir si lo actualizamos o lo eliminamos.
       if (producto.cantidad > 1) {
         response = await axios.put(
-          `http://localhost:3000/api/carrito/${carritoId}/${productoId}`,
+          `carrito/${carritoId}/${productoId}`,
           {
             cantidad: producto.cantidad - 1,
           }
         );
       } else {
         response = await axios.delete(
-          `http://localhost:3000/api/carrito/${carritoId}/${productoId}`
+          `carrito/${carritoId}/${productoId}`
         );
       }
 
@@ -99,7 +99,7 @@ function Carrito() {
       console.error("Producto ID no definido");
       return 0;
     }
-    const response = await axios.get(`http://localhost:3000/api/productos/${productoId}/stock`);
+    const response = await axios.get(`productos/${productoId}/stock`);
 
     return response.data.stock;
   };
@@ -119,7 +119,7 @@ function Carrito() {
     // Concatena los nombres de todos los productos en el carrito
     const productNames = productos.map(producto => producto.nombre).join(", ");
     
-    const response = await axios.post('/create_preference', {
+    const response = await axios.post('https://ezcell.repl.cocreate_preference', {
       title: `Compra de: ${productNames}`, // Incluye los nombres de los productos en el título
       quantity: 1,
       price: calcularTotal()

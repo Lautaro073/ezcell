@@ -11,11 +11,11 @@ import Login from "./pages/Login";
 import CargarProductos from "./pages/cargarProductos";
 import SearchPage from "./components/Navegacion/SearchPage";
 //import ProductosPorCategoria from './components/ProductoPorCategoria';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter  as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 function App() {
-  //axios.defaults.baseURL = 'http://localhost:3000/api/';
+  axios.defaults.baseURL = "https://ezcell.repl.co/api/";
 
   const agregarAlCarrito = async (id_producto, cantidad = 1) => {
     try {
@@ -28,7 +28,7 @@ function App() {
       }
       console.log(`Enviando petición al carrito con ID: ${sessionId}`);
 
-      await axios.post(`http://localhost:3000/api/carrito/${sessionId}`, {
+      await axios.post(`carrito/${sessionId}`, {
         id_producto,
         cantidad,
       });
@@ -41,27 +41,85 @@ function App() {
   useEffect(() => {
     const sessionId = localStorage.getItem("sessionId");
     console.log("Sesión ID actual:", sessionId);
-  
-    // Si no hay un sessionId en el almacenamiento local, entonces no hacemos nada.
+
+    // Si no hay un sessionId en el almacenamiento local, solicitamos uno nuevo.
     if (!sessionId) {
-      console.log("No hay sessionId para guardar en la base de datos.");
-      return;
+      axios
+        .get("https://ezcell.repl.co/api/session/start-session")
+        .then((response) => {
+          const newSessionId = response.data.sessionId;
+
+          if (newSessionId) {
+            // Almacenamos el sessionId en el almacenamiento local
+            localStorage.setItem("sessionId", newSessionId);
+
+            // Enviamos el sessionId a la base de datos.
+            axios
+              .post("session/guardar", {
+                id_carrito: newSessionId,
+              })
+              .then(() => {
+                console.log(
+                  "ID del carrito guardado en la base de datos:",
+                  newSessionId
+                );
+              })
+              .catch((error) => {
+                console.error(
+                  "Error al guardar el ID del carrito en la base de datos:",
+                  error
+                );
+              });
+          }
+        });
     }
-  
     // Enviamos el sessionId a la base de datos.
     axios
-      .post("http://localhost:3000/api/session/guardar", {
+      .post("session/guardar", {
         id_carrito: sessionId,
       })
       .then(() => {
         console.log("ID del carrito guardado en la base de datos:", sessionId);
       })
       .catch((error) => {
-        console.error("Error al guardar el ID del carrito en la base de datos:", error);
+        console.error(
+          "Error al guardar el ID del carrito en la base de datos:",
+          error
+        );
       });
   }, []);
-  
-  
+
+  /*useEffect(() => {
+    const sessionId = localStorage.getItem('sessionId');
+    
+    console.log('Sesión ID actual:', sessionId);
+    if (!sessionId) {
+        axios.get('session/start-session')
+            .then(response => {
+                const newSessionId = response.data.sessionId;
+                if (newSessionId) {
+                    // Si no recibimos un sessionId válido, crea un nuevo carrito
+                    axios.post('session/crear')
+                        .then(response => {
+                            const carritoId = response.data.id_carrito;
+                            if (carritoId) {
+                                localStorage.setItem('sessionId', carritoId);
+                            } else {
+                                console.error('Error al obtener el ID del carrito');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al crear un nuevo carrito:', error);
+                        });
+                } else {
+                    localStorage.setItem('sessionId', newSessionId);
+                }
+            })
+            .catch(error => {
+                console.error('Error al iniciar la sesión:', error);
+            });
+    }
+  }, []);*/
 
   return (
     <Router>
@@ -77,16 +135,19 @@ function App() {
         />
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/checkout/error" element={<Checkouterror/>} />
+        <Route path="/checkout/error" element={<Checkouterror />} />
         <Route path="/checkout/pendiente" element={<Checkoutpendiente />} />
         <Route path="/checkout/exito" element={<Checkoutexito />} />
         <Route
           path="/productos"
           element={<ListaProductos agregarAlCarrito={agregarAlCarrito} />}
         />
-        <Route path="/buscar" element={<SearchPage agregarAlCarrito={agregarAlCarrito}/>} />
+        <Route
+          path="/buscar"
+          element={<SearchPage agregarAlCarrito={agregarAlCarrito} />}
+        />
         <Route path="/login" element={<Login />} />
-        <Route path="/cargarProductos" element={<CargarProductos />} />
+        <Route path="/login/cargarProductos" element={<CargarProductos />} />
         <Route
           path="*"
           element={<Inicio agregarAlCarrito={agregarAlCarrito} />}

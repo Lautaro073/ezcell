@@ -19,7 +19,7 @@ function NavbarPrincipal() {
   const actualizarCarrito = async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/carrito/${userId}`
+        `carrito/${userId}`
       );
       const productos = response.data;
       const cantidad = productos.length;
@@ -52,7 +52,7 @@ function NavbarPrincipal() {
 
     if (userId) {
       axios
-        .get(`http://localhost:3000/api/carrito/${userId}`)
+        .get(`carrito/${userId}`)
         .then((response) => {
           console.log("Respuesta del servidor:", response.data);
           const productos = response.data;
@@ -86,7 +86,7 @@ function NavbarPrincipal() {
     e.preventDefault();
     window.location.href = `/buscar?search=${search}`;
     axios
-      .get(`http://localhost:3000/api/productos/search?search=${search}`)
+      .get(`productos/search?search=${search}`)
       .then((response) => {
         setProductos(response.data); // Actualización del estado productos
         setShowResults(true); // Mostrar los resultados
@@ -161,7 +161,7 @@ function NavbarCategorias({ children }) {
     async function obtenerCategorias() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/categorias"
+          "categorias"
         );
         setCategorias(response.data);
       } catch (error) {

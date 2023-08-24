@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import '../../config'; 
 function Producto(props) {
     const productId = id; 
     const { id } = useParams();
@@ -9,7 +10,7 @@ function Producto(props) {
     useEffect(() => {
       async function obtenerProductos() {
         try {
-          const response = await axios.get("http://localhost:3000/api/productos");
+          const response = await axios.get("productos");
           setProductos(response.data);
         } catch (error) {
           console.error("Error al obtener los productos:", error);

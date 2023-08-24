@@ -6,7 +6,7 @@ function AgregarAlCarritoBoton({ idProducto, nombreProducto }) {
         try {
             const idCarrito = localStorage.getItem('idCarrito') || null;
             
-            const respuesta = await axios.post('http://localhost:3000/api/carrito', { 
+            const respuesta = await axios.post('carrito', { 
                 idCarrito, 
                 idProducto
             });

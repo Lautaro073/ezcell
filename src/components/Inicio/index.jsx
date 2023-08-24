@@ -10,7 +10,7 @@ function Inicio(props) {
   useEffect(() => {
     async function obtenerProductos() {
       try {
-        const response = await axios.get("http://localhost:3000/api/productos");
+        const response = await axios.get("productos");
         setProductos(response.data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);

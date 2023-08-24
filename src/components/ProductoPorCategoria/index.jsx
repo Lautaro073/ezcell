@@ -14,7 +14,7 @@ function ProductosPorCategoria() {
         return;
     }
             try {
-                const response = await axios.get(`http://localhost:3000/api/productos/categoria/${categoria.nombre_categoria}`);
+                const response = await axios.get(`productos/categoria/${categoria.nombre_categoria}`);
                 setProductos(response.data);
             } catch (error) {
                 console.error("Error al obtener productos por categoría:", error);

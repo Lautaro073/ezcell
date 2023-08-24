@@ -14,7 +14,7 @@ function SearchResults({ productos }) {
           }
           console.log(`Enviando petición al carrito con ID: ${sessionId}`);
     
-          await axios.post(`http://localhost:3000/api/carrito/${sessionId}`, {
+          await axios.post(`carrito/${sessionId}`, {
             id_producto,
             cantidad,
           });

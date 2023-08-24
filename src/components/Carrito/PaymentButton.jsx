@@ -5,7 +5,7 @@ const PaymentButton = ({ title, quantity, price }) => {
   const [paymentUrl, setPaymentUrl] = useState('');
 
   const handlePayment = () => {
-    axios.post('/create_preference', { title, quantity, price })
+    axios.post('http://154.56.51.56:3000/create_preference', { title, quantity, price })
       .then(response => {
         setPaymentUrl(response.data);
       })

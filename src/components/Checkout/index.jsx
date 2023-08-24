@@ -18,7 +18,7 @@ function Checkout() {
         };
 
         try {
-            const response = await axios.post('http://localhost:3000/api/checkout', checkoutData);
+            const response = await axios.post('checkout', checkoutData);
             if (response.status === 200) {
                 alert('Compra realizada con éxito!');
                 localStorage.removeItem('carritoId');

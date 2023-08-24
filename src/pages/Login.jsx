@@ -11,12 +11,12 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/login', { user, password });
+            const response = await axios.post('login', { user, password });
 
             const token = response.data.token;
             localStorage.setItem('authToken', token); 
             alert('Inicio de sesión exitoso!'); // Mensaje de éxito
-            navigate("/cargarProductos");
+            navigate("/login/cargarProductos");
         }  catch (error) {
             console.error("Error:", error.response ? error.response.data : error.message);
             alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
@@ -69,8 +69,7 @@ function Login() {
 export default function LoginForm(){
     return(
         <>
-            <Login/>
-            <CargarProducto/>
+            <Login/> 
         </>
     )
     

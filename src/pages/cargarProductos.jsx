@@ -17,7 +17,7 @@ function CargarProducto() {
     const obtenerCategorias = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/categorias"
+          "categorias"
         );
         setCategorias(response.data);
       } catch (error) {
@@ -41,7 +41,7 @@ function CargarProducto() {
     }
 
     try {
-      await axios.post("http://localhost:3000/api/productos", formData);
+      await axios.post("productos", formData);
       alert("Producto agregado correctamente");
     } catch (error) {
       console.error("Hubo un error al cargar el producto:", error);
@@ -60,7 +60,7 @@ function CargarProducto() {
     }
 
     try {
-        await axios.put(`http://localhost:3000/api/productos/${productoId}`, formData);
+        await axios.put(`productos/${productoId}`, formData);
         alert("Producto actualizado correctamente");
     } catch (error) {
         console.error("Hubo un error al actualizar el producto:", error);
@@ -70,7 +70,7 @@ function CargarProducto() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/api/productos/${productoId}`);
+      await axios.delete(`productos/${productoId}`);
       alert("Producto eliminado correctamente");
       // Puedes limpiar el formulario o redirigir al usuario después de eliminar el producto
       setProductoId(null);
@@ -85,7 +85,7 @@ function CargarProducto() {
   const seleccionarProducto = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/productos/${id}`
+        `productos/${id}`
       );
       const producto = response.data;
       setNombreProducto(producto.nombre);
@@ -105,7 +105,7 @@ function CargarProducto() {
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/productos");
+        const response = await axios.get("productos");
         setProductos(response.data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
