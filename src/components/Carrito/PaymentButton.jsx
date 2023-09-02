@@ -5,7 +5,7 @@ const PaymentButton = ({ title, quantity, price }) => {
   const [paymentUrl, setPaymentUrl] = useState('');
 
   const handlePayment = () => {
-    axios.post('http://154.56.51.56:3000/create_preference', { title, quantity, price })
+    axios.post('/crearpago', { title, quantity, price })
       .then(response => {
         setPaymentUrl(response.data);
       })

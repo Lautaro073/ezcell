@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const mercadopago = require('mercadopago');
+const dotenv = require('dotenv');
+
+//.env
+dotenv.config()
 
 mercadopago.configure({
-  access_token: 'TEST-6229067183884225-080917-6a286f43b742af0e5267783a37a15c8d-1128342054'
+  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN
 });
-/*mercadopago.configure({
-  access_token: 'APP_USR-6229067183884225-080917-d5744e088841b5a2de969ce102b274c6-1128342054'
-});*/
+
 router.post('/', (req, res) => {
     let preference = {
       items: [
@@ -19,9 +21,9 @@ router.post('/', (req, res) => {
         }
       ],
       back_urls: {
-        success: 'http://ezecell.store/checkout',
-        failure: 'http://ezecell.store/checkout/error',
-        pending: 'http://ezecell.store/checkout/pendiente',
+        success: 'https://ezcell.netlify.app/checkout',
+        failure: 'https://ezcell.netlify.app/checkout/error',
+        pending: 'https://ezcell.netlify.app/checkout/pendiente',
       },
       auto_return: 'approved',
     };

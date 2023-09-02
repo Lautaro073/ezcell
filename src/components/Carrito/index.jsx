@@ -119,7 +119,7 @@ function Carrito() {
     // Concatena los nombres de todos los productos en el carrito
     const productNames = productos.map(producto => producto.nombre).join(", ");
     
-    const response = await axios.post('https://ezcell.repl.cocreate_preference', {
+    const response = await axios.post('create_preference', {
       title: `Compra de: ${productNames}`, // Incluye los nombres de los productos en el título
       quantity: 1,
       price: calcularTotal()

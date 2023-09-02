@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('../database');
 const path = require('path');
 const router = express.Router();
-
+const verifyAdmin = require('../middlewares/middlewares');
 
 router.get('/:id/stock', async (req, res) => {
     const productoId = req.params.id;
@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 // Agregar un nuevo producto
-router.post('/', async (req, res) => {
+router.post('/', verifyAdmin, async (req, res) => {
     try {
         const { nombre, descripcion, precio, id_categoria, stock } = req.body;
 
@@ -98,7 +98,7 @@ router.post('/', async (req, res) => {
 
 
 // Actualizar un producto
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyAdmin, async (req, res) => {
     try {
         const { nombre, descripcion, precio, id_categoria, stock } = req.body;
         
@@ -131,7 +131,7 @@ router.put('/:id', async (req, res) => {
 
 
 // Eliminar un producto
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',verifyAdmin, async (req, res) => {
     try {
         await db.query('DELETE FROM Productos WHERE id_producto = ?', [req.params.id]);
         res.send('Producto eliminado correctamente');

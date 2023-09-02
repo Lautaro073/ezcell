@@ -12,7 +12,7 @@ function CargarProducto() {
   const [stock, setStock] = useState(0);
   const [productoId, setProductoId] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState("");
-
+ 
   useEffect(() => {
     const obtenerCategorias = async () => {
       try {

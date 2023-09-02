@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 
 function verifyAdmin(req, res, next) {
-    const token = req.headers['authorization'];
+    const authHeader = req.headers['authorization'];
+    // Normalmente el token viene como "Bearer <token>", por lo que lo dividimos y tomamos la segunda parte
+    const token = authHeader && authHeader.split(' ')[1];
+
     if (!token) return res.status(403).send('Token no proporcionado.');
 
     jwt.verify(token, 'yourSecretKey', (err, decoded) => {
@@ -14,7 +17,4 @@ function verifyAdmin(req, res, next) {
     });
 }
 
-// Luego, usa el middleware en las rutas que quieras proteger:
-router.post('/agregarProducto', verifyAdmin, (req, res) => {
-    // Lógica para agregar producto...
-});
+module.exports = verifyAdmin;

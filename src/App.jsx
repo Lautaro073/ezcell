@@ -14,8 +14,9 @@ import SearchPage from "./components/Navegacion/SearchPage";
 import { BrowserRouter  as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
+import PrivateRoute from './PrivateRoute'; // Asegúrate de poner la ruta correcta al componente.
 function App() {
-  axios.defaults.baseURL = "https://ezcell.repl.co/api/";
+ 
 
   const agregarAlCarrito = async (id_producto, cantidad = 1) => {
     try {
@@ -39,20 +40,20 @@ function App() {
     }
   };
   useEffect(() => {
-    const sessionId = localStorage.getItem("sessionId");
-    console.log("Sesión ID actual:", sessionId);
+    let currentSessionId = localStorage.getItem("sessionId");
+    console.log("Sesión ID actual:", currentSessionId);
 
     // Si no hay un sessionId en el almacenamiento local, solicitamos uno nuevo.
-    if (!sessionId) {
+    if (!currentSessionId) {
       axios
-        .get("https://ezcell.repl.co/api/session/start-session")
+        .get("session/start-session")
         .then((response) => {
           const newSessionId = response.data.sessionId;
 
           if (newSessionId) {
             // Almacenamos el sessionId en el almacenamiento local
             localStorage.setItem("sessionId", newSessionId);
-
+            
             // Enviamos el sessionId a la base de datos.
             axios
               .post("session/guardar", {
@@ -73,21 +74,8 @@ function App() {
           }
         });
     }
-    // Enviamos el sessionId a la base de datos.
-    axios
-      .post("session/guardar", {
-        id_carrito: sessionId,
-      })
-      .then(() => {
-        console.log("ID del carrito guardado en la base de datos:", sessionId);
-      })
-      .catch((error) => {
-        console.error(
-          "Error al guardar el ID del carrito en la base de datos:",
-          error
-        );
-      });
-  }, []);
+}, []);
+
 
   /*useEffect(() => {
     const sessionId = localStorage.getItem('sessionId');
@@ -123,12 +111,10 @@ function App() {
 
   return (
     <Router>
-      <Navegacion />
-      <Routes>
-        <Route
-          path="/"
-          element={<Inicio agregarAlCarrito={agregarAlCarrito} />}
-        />
+    <Navegacion />
+    <Routes>
+      <Route path="/" element={<Inicio agregarAlCarrito={agregarAlCarrito} />} />
+      
         <Route
           path="/producto/:id"
           element={<Producto agregarAlCarrito={agregarAlCarrito} />}
@@ -146,16 +132,15 @@ function App() {
           path="/buscar"
           element={<SearchPage agregarAlCarrito={agregarAlCarrito} />}
         />
-        <Route path="/login" element={<Login />} />
-        <Route path="/login/cargarProductos" element={<CargarProductos />} />
-        <Route
-          path="*"
-          element={<Inicio agregarAlCarrito={agregarAlCarrito} />}
-        />{" "}
-        {/* Esto captura cualquier ruta no definida */}
+       <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<PrivateRoute />}>
+            <Route path="cargarProductos" element={<CargarProductos />} />
+        </Route>
+        <Route path="*" element={<Inicio agregarAlCarrito={agregarAlCarrito} />} /> {/* Esto captura cualquier ruta no definida */}
       </Routes>
     </Router>
   );
 }
+
 
 export default App;

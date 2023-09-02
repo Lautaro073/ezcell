@@ -1,29 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import CargarProducto from './cargarProductos';
+
 
 function Login() {
     const navigate = useNavigate();
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
-
+   
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post('login', { user, password });
-
+    
             const token = response.data.token;
+    
+            // Guarda el token en localStorage
             localStorage.setItem('authToken', token); 
+    
+            // Configurar axios para usar este token en solicitudes futuras
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Usualmente se antepone 'Bearer' al token, si tu backend lo requiere.
+    
             alert('Inicio de sesión exitoso!'); // Mensaje de éxito
-            navigate("/login/cargarProductos");
-        }  catch (error) {
+            navigate("/login/cargarproductos");
+        } catch (error) {
             console.error("Error:", error.response ? error.response.data : error.message);
             alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
         }
-        
     };
     
+    
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = token;
+        }
+    }, []);
     
     
     return (
@@ -46,11 +59,7 @@ function Login() {
                                     <label className="form-label" htmlFor="typePasswordX-2">Password</label>
                                 </div>
 
-                                {/* Checkbox */}
-                                <div className="form-check d-flex justify-content-start mb-4">
-                                    <input className="form-check-input" type="checkbox" value="" id="form1Example3" />
-                                    <label className="form-check-label" htmlFor="form1Example3"> Remember password </label>
-                                </div>
+                              
 
                                 <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={handleSubmit}>Login</button>
 
